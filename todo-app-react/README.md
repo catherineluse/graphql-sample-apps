@@ -34,14 +34,14 @@ We represent that in the GraphQL schema shown below:
 
 ```graphql
 type Task {
-    id: ID!
-    title: String!
-    completed: Boolean!
+  id: ID!
+  title: String!
+  completed: Boolean!
 }
 
 type User {
-    username: String!
-    name: String
+  username: String!
+  name: String
 }
 ```
 
@@ -62,16 +62,16 @@ Save the content below as `schema.graphql`.
 
 ```graphql
 type Task {
-    id: ID!
-    title: String! @search(by: [fulltext])
-    completed: Boolean! @search
-    user: User!
+  id: ID!
+  title: String! @search(by: [fulltext])
+  completed: Boolean! @search
+  user: User!
 }
 
 type User {
-    username: String! @id @search(by: [hash])
-    name: String
-    tasks: [Task] @hasInverse(field: user)
+  username: String! @id @search(by: [hash])
+  name: String
+  tasks: [Task] @hasInverse(field: user)
 }
 ```
 
@@ -93,30 +93,20 @@ Let's add a user and some todos in our Todo App.
 
 ```graphql
 mutation {
-  addUser(input: [
-    {
-      username: "alice@dgraph.io",
-      name: "Alice",
-      tasks: [
-        {
-          title: "Avoid touching your face",
-          completed: false,
-        },
-        {
-          title: "Stay safe",
-          completed: false
-        },
-        {
-          title: "Avoid crowd",
-          completed: true,
-        },
-        {
-          title: "Wash your hands often",
-          completed: true
-        }
-      ]
-    }
-  ]) {
+  addUser(
+    input: [
+      {
+        username: "alice@dgraph.io"
+        name: "Alice"
+        tasks: [
+          { title: "Avoid touching your face", completed: false }
+          { title: "Stay safe", completed: false }
+          { title: "Avoid crowd", completed: true }
+          { title: "Wash your hands often", completed: true }
+        ]
+      }
+    ]
+  ) {
     user {
       username
       name
@@ -140,7 +130,7 @@ query {
     title
     completed
     user {
-        username
+      username
     }
   }
 }
@@ -211,11 +201,7 @@ Now, let's fetch all todos which are completed :
 
 ```graphql
 query {
-  queryTask(filter: {
-    complete: {
-      eq: "true"
-    }
-  }) {
+  queryTask(filter: { complete: { eq: "true" } }) {
     id
     title
   }
@@ -240,11 +226,7 @@ Now, let's try to fetch todos whose title has the word _"remember"_ :
 
 ```graphql
 query {
-  queryTask(filter: {
-    title: {
-      alloftext: "remember"
-    }
-  }) {
+  queryTask(filter: { title: { alloftext: "remember" } }) {
     id
     title
     completed
@@ -261,11 +243,16 @@ Install the dependencies needed to bring up the application.
 ### `npm start`
 
 Before you start, you should [create an Auth0 single-page application](https://auth0.com/docs/dashboard/guides/applications/register-app-spa)
-and set the *auth0-domain* and *auth0-client-id* in `src/config.json`.
-Also, if you are not running Dgraph locally, be sure to modify
-*graphqlUrl* to point at accurate GraphQL endpoint.
+and set the _auth0-domain_ and _auth0-client-id_ in `src/config.json`.
 
-Runs the Todo application.<br />
+Also, if you are not using Dgraph Slash, specify the GraphQL endpoint using the `REACT_APP_GRAPHQL_ENDPOINT` environment variable:
+
+```
+REACT_APP_GRAPHQL_ENDPOINT=http://localhost:8080/graphql npm start
+```
+
+For brevity, you can set this variable in a new `.env` file and then just run `npm start`.
+
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 ### `npm run build`
